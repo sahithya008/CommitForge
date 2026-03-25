@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+        <h3 style="margin:0;">Manage Projects</h3>
+        <a href="/admin/dashboard" class="btn-secondary"
+            style="padding:0.5rem 1rem; text-decoration:none; font-size:0.85rem;">← Back to Dashboard</a>
+    </div>
+
+    {% if projects %}
+    <div style="display:grid; gap:1rem;">
+        {% for p in projects %}
+        <div
+            style="background:#fafafa; border:1px solid #d0d0d0; border-radius:0.75rem; padding:1rem; display:grid; gap:0.75rem;">
+            <div style="display:flex; justify-content:space-between; align-items:start; gap:1rem;">
+                <div>
+                    <strong style="font-size:1.05rem;">{{ p.title }}</strong>
+                    <div style="font-size:0.85rem; color:#4a3c4a; margin-top:0.25rem;">{{ p.description or "No
+                        description" }}</div>
+                    <div style="font-size:0.8rem; color:#6b5b6b; margin-top:0.45rem;">
+                        Contributor: {{ p.contributor_name or ("User #" ~ p.contributor_id) }}
+                        {% if p.category %} | Category: {{ p.category }}{% endif %}
+                    </div>
+                </div>
+                <span class="pill">{{ p.status or "Submitted" }}</span>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:0.6rem;">
+                {% if p.demo_link %}
+                <a href="{{ p.demo_link }}" target="_blank" class="btn-secondary"
+                    style="padding:0.4rem 0.8rem; text-align:center; font-size:0.85rem; text-decoration:none;">View
+                    Demo</a>
+                {% endif %}
+                {% if p.github_link %}
+                <a href="{{ p.github_link }}" target="_blank" class="btn-secondary"
+                    style="padding:0.4rem 0.8rem; text-align:center; font-size:0.85rem; text-decoration:none;">GitHub</a>
+                {% endif %}
+                {% if p.zip_path %}
+                <a href="/uploads/{{ p.zip_path }}" class="btn-secondary"
+                    style="padding:0.4rem 0.8rem; text-align:center; font-size:0.85rem; text-decoration:none;">Download</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p style="color:#5a5a5a; text-align:center; padding:2rem;">No projects created yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="notification-panel panel">
+    {% for category, message in messages %}
+    <div class="flash-message {% if category == 'success' %}flash-success{% else %}flash-error{% endif %}">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+{% if notifications %}
+<div class="notification-panel panel">
+    <h4 class="section-title" style="margin:0 0 var(--space-lg) 0; color:var(--primary);">📬 Recent Notifications</h4>
+    <div class="notification-list">
+        {% for notification in notifications[:5] %}
+        <div class="notification-item{% if notification.read_status == 0 %} unread{% endif %}">
+            <p class="notification-message">{{ notification.message }}</p>
+            <div class="notification-timestamp">{{ notification.created_at | ist_time("date") }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    <a href="/notifications" class="link-primary" style="margin-top:var(--space-md);">View all</a>
+</div>
+{% endif %}
+
+<div class="panel">
+    <div class="section-header">
+        <h3 class="section-title">Users</h3>
+        <a href="/admin/users/add" class="btn-primary">+ Add User</a>
+    </div>
+    {% if users %}
+    <ul class="user-list">
+        {% for u in users %}
+        <li class="user-item">
+            <div>
+                <p class="user-name">{{ u.name }}</p>
+                <p class="user-email">{{ u.email or "-" }}</p>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+                <span class="pill">{{ u.role }}</span>
+                {% if u.id != session['user_id'] %}
+                <form method="POST" action="/admin/users/{{ u.id }}/delete" style="margin:0;"
+                    onsubmit="return confirm('Delete user {{ u.name }}? This cannot be undone.')">
+                    <button type="submit" class="btn-danger btn-small">Delete</button>
+                </form>
+                {% endif %}
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No registered users.</p>
+    {% endif %}
+</div>
+
+<div class="panel">
+    <div class="section-header">
+        <h3 class="section-title">Projects</h3>
+        <div style="display: flex; gap: var(--space-md);">
+            <a href="/admin/projects/manage" class="btn-primary">Manage Projects</a>
+            <form method="POST" action="/admin/projects/clear_all"
+                onsubmit="return confirm('Are you sure you want to clear ALL projects and their history? This action cannot be undone.')"
+                style="display: inline;">
+                <button type="submit" class="btn-danger">Clear All Projects</button>
+            </form>
+        </div>
+    </div>
+    {% if projects %}
+    <ul style="list-style:none; margin:0; padding:0; display:grid; gap:0.85rem;">
+        {% for p in projects %}
+        <li
+            style="background:#fafafa; border:1px solid #d0d0d0; border-radius:0.75rem; padding:1rem; display:grid; gap:0.9rem;">
+            <div style="display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; align-items:flex-start;">
+                <div>
+                    <strong>{{ p.title }}</strong>
+                    <div style="font-size:0.85rem; color:#3a3a3a; margin-top:0.25rem;">{{ p.description or "No
+                        description" }}</div>
+                    <div style="font-size:0.8rem; color:#5a5a5a; margin-top:0.45rem;">
+                        Contributor: {{ p.contributor_name or ("User #" ~ p.contributor_id) }}
+                        {% if p.category %} | Category: {{ p.category }}{% endif %}
+                    </div>
+                    <div style="font-size:0.8rem; color:#5a5a5a; margin-top:0.25rem;">
+                        Assigned reviewers:
+                        {% if p.assigned_reviewers %}
+                        {% for reviewer in p.assigned_reviewers %}
+                        <div
+                            style="display:inline-block; background:#e0e0e0; color:#4a4a4a; padding:0.25rem 0.5rem; border-radius:0.25rem; margin:0.2rem; font-size:0.75rem;">
+                            {{ reviewer.name }}{% if reviewer.email %} ({{ reviewer.email }}){% endif %}
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <span style="color:#5a5a5a;">Unassigned</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <span class="pill">{{ p.status or "Submitted" }}</span>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:0.75rem;">
+                <form method="POST" action="/admin/projects/{{ p.id }}/assignment"
+                    style="display:grid; gap:0.45rem; align-items:end;">
+                    <label style="font-size:0.8rem; color:#3a3a3a;">Assign reviewers (select multiple)</label>
+                    <select name="reviewer_ids" multiple style="min-height:100px; padding:0.5rem;">
+                        {% for reviewer in reviewers %}
+                        <option value="{{ reviewer.id }}" {% if reviewer.id in p.assigned_reviewer_ids %}selected{%
+                            endif %}>
+                            {{ reviewer.name }}{% if reviewer.email %} ({{ reviewer.email }}){% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn-primary" style="max-width:180px;">Save Assignments</button>
+                </form>
+
+                <form method="POST" action="/admin/projects/{{ p.id }}/status"
+                    style="display:grid; gap:0.45rem; align-items:end;">
+                    <label style="font-size:0.8rem; color:#3a3a3a;">Project status</label>
+                    <select name="status">
+                        {% for status_option in status_options %}
+                        <option value="{{ status_option }}" {% if (p.status or "Submitted" )==status_option %}selected{%
+                            endif %}>
+                            {{ status_option }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn-secondary" style="max-width:160px;">Update Status</button>
+                </form>
+                <form method="POST" action="/admin/projects/{{ p.id }}/clear"
+                    onsubmit="return confirm('Clear this project and its history? This cannot be undone.')"
+                    style="display:grid; gap:0.45rem; align-items:end;">
+                    <button type="submit" class="btn-danger" style="max-width:160px;">Clear Project</button>
+                </form>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No projects created yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

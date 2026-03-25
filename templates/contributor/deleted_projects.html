@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel">
+    <div class="dashboard-header">
+        <div>
+            <h3>Deleted Projects</h3>
+            <p class="dashboard-subtitle">Your removed submissions are retained for audit and restore tracking.</p>
+        </div>
+        <div class="dashboard-stats" style="display:flex; gap:0.5rem; align-items:center;">
+            <form method="POST" action="/contributor/deleted/restore_all" style="margin:0;">
+                <button type="submit" class="btn-primary btn-small">Restore All</button>
+            </form>
+            <a class="btn-secondary" href="/contributor/dashboard">Back to Dashboard</a>
+        </div>
+    </div>
+    <div class="project-list">
+        {% if projects %}
+        <ul class="project-grid">
+            {% for p in projects %}
+            <li class="project-item">
+                <div class="project-header">
+                    <strong class="project-title">{{ p.title }}</strong>
+                    <span class="pill status-pill">{{ p.status }}</span>
+                </div>
+                <div class="project-desc">{{ p.description or "No description" }}</div>
+                <div class="project-meta">Deleted at: {{ p.deleted_at or 'unknown' }}</div>
+                <div class="project-actions">
+                    <a class="btn-secondary btn-small" href="/contributor/history/{{ p.id }}">History</a>
+                    <form method="POST" action="/contributor/restore/{{ p.id }}" class="project-delete-form"
+                        style="margin:0;">
+                        <button type="submit" class="btn-primary btn-small">Restore</button>
+                    </form>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No deleted projects found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

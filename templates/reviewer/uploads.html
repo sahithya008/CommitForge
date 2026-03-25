@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel" style="max-width:900px;">
+    <h3 style="margin-top:0;">Uploaded Files</h3>
+    <p style="color:#1e3a5f;">Browse and download submitted ZIPs (reviewer-only access).</p>
+    {% if files %}
+    <ul style="padding-left:1.1rem;">
+        {% for f in files %}
+        <li style="margin:0.35rem 0;"><a href="/uploads/{{ f }}" style="color:#1e3a5f;">{{ f }}</a></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p style="color:#f1a94e;">No uploaded project files yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

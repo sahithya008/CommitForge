@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+{% if notifications %}
+<div class="notification-panel panel">
+    <h4 class="section-title" style="margin:0 0 var(--space-lg) 0; color:var(--primary);">📬 Recent Notifications</h4>
+    <div class="notification-list">
+        {% for notification in notifications[:5] %}
+        <div class="notification-item{% if notification.read_status == 0 %} unread{% endif %}">
+            <p class="notification-message">{{ notification.message }}</p>
+            <div class="notification-timestamp">{{ notification.created_at | ist_time("date") }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    <a href="/notifications" class="link-primary">View all</a>
+</div>
+{% endif %}
+
+<div class="panel">
+    <div class="dashboard-header">
+        <div>
+            <h3 class="section-title">Assigned Projects</h3>
+            <p class="dashboard-subtitle">Review the projects assigned to you and track their current status.</p>
+        </div>
+        <div class="dashboard-stats">
+            <span class="pill total-count">{{ projects|length }} assigned</span>
+            <a class="btn-secondary" href="/reviewer/history">My Reviews</a>
+        </div>
+    </div>
+
+    {% if projects %}
+    <ul style="list-style:none; margin:0; padding:0; display:grid; gap:0.8rem;">
+        {% for p in projects %}
+        <li class="review-card">
+            <div>
+                <h4 style="margin:0 0 0.25rem; color:#1a1a1a;">{{ p.title }}</h4>
+                <p style="margin:0 0 0.65rem; color:#5a5a5a; font-size:0.9rem;">{{ p.description or "No description" }}
+                </p>
+                <div
+                    style="display:flex; flex-wrap:wrap; gap:0.55rem; align-items:center; font-size:0.85rem; color:#7a7a7a;">
+                    <span>Category: {{ p.category or 'N/A' }}</span>
+                    <span>Submitted by: {{ p.contributor_name or ('User #' ~ p.contributor_id) }}</span>
+                    <span>Status: {{ p.status or 'Submitted' }}</span>
+                    <span>Last updated: {{ (p.updated_at or p.created_at) | ist_time("datetime") if (p.updated_at or
+                        p.created_at) else 'unknown' }}</span>
+                </div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.5rem;">
+                <span class="pill" style="background:#e8e8e8; color:#8b7a8a;">{{ p.status or 'Submitted'
+                    }}</span>
+                <a class="btn-primary" style="padding:0.45rem 0.8rem; font-size:0.85rem;"
+                    href="/review/{{p.id}}">Review</a>
+                <a class="btn-secondary" style="padding:0.35rem 0.6rem; font-size:0.78rem;"
+                    href="/reviewer/project-history/{{ p.id }}">History</a>
+                <form method="POST" action="/reviewer/delete/{{ p.id }}" style="margin:0;">
+                    <button type="submit" class="btn-danger btn-small">Delete</button>
+                </form>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No projects are assigned to you yet. Check with the admin for assignment.</p>
+    {% endif %}
+</div>
+{% endblock %}

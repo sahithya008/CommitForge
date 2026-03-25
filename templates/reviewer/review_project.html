@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel" style="max-width:850px;">
+    <div
+        style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1rem;">
+        <div>
+            <h3 style="margin:0;">{{ project.title }}</h3>
+            <span style="color:#1e3a5f; font-size:0.9rem;">Project ID: {{ project.id }}</span>
+            <br>
+            <span style="color:#1e3a5f; font-size:0.85rem;">Last updated: {{ (project.updated_at or project.created_at)
+                | ist_time("datetime") if (project.updated_at or project.created_at) else 'unknown' }}</span>
+        </div>
+        <span class="pill" style="background:rgba(5, 249, 213,0.14); color:#05f9d5;">{{ project.status }}</span>
+    </div>
+
+    <div style="margin-bottom:1rem; color:#1e3a5f; font-size:0.95rem; line-height:1.5;">{{ project.description }}</div>
+
+    <div class="panel"
+        style="background:rgba(255,255,255,0.04); margin-bottom:1rem; border:1px dashed rgba(255,255,255,0.14);">
+        <h4 style="margin:0 0 0.7rem 0; color:#1e3a5f;">Project details</h4>
+        <p style="margin:0.15rem 0;"><strong>GitHub:</strong> <a href="{{ project.github_link }}" target="_blank"
+                rel="noreferrer" style="color:#1e3a5f;">{{ project.github_link }}</a></p>
+        <p style="margin:0.15rem 0;"><strong>Demo:</strong> <a href="{{ project.demo_link }}" target="_blank"
+                rel="noreferrer" style="color:#1e3a5f;">{{ project.demo_link }}</a></p>
+        <p style="margin:0.15rem 0;"><strong>Project category:</strong> {{ project.category }}</p>
+
+        {% if project.zip_path %}
+        {% set file_name = project.zip_path.split('/')[-1].split('\\')[-1] %}
+        <p style="margin:0.15rem 0;"><strong>Uploaded file:</strong> {{ file_name }}</p>
+        <p style="margin:0.15rem 0;"><a href="/uploads/{{ file_name }}" style="color:#1e3a5f;">Download uploaded zip</a>
+        </p>
+        <p style="margin:0.15rem 0;"><a href="/reviewer/uploads" style="color:#1e3a5f;">Open uploads folder</a></p>
+        {% else %}
+        <p style="margin:0.15rem 0;color:#f1a94e;"><strong>No uploaded file available.</strong></p>
+        {% endif %}
+    </div>
+
+    <form method="POST" class="form-grid">
+        <label>Feedback</label>
+        <textarea name="feedback" rows="6" style="min-height:130px;" required></textarea>
+
+        <label>Decision</label>
+        <select name="decision" required>
+            <option>Approved</option>
+            <option>Rejected</option>
+            <option>Revision Requested</option>
+        </select>
+
+        <div style="display:flex; gap:0.5rem; align-items:center;">
+            <button type="reset" class="btn-secondary" style="max-width:160px;">Clear</button>
+            <button type="submit" class="btn-primary" style="max-width:160px;">Submit Review</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

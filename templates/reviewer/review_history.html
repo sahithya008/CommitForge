@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel">
+    <div class="dashboard-header">
+        <div>
+            <h3>Review History</h3>
+            <p class="dashboard-subtitle">Past projects you reviewed and decisions taken.</p>
+        </div>
+        <div class="dashboard-stats" style="display:flex; gap:0.5rem; align-items:center;">
+            <form method="POST" action="/reviewer/history/clear"
+                onsubmit="return confirm('Clear all review history? This cannot be undone.')" style="margin:0;">
+                <button type="submit" class="btn-secondary"
+                    style="background:#f8d7da; color:#721c24; border-color:#f5c6cb;">Clear History</button>
+            </form>
+            <a class="btn-secondary" href="/reviewer/dashboard">Back to All</a>
+        </div>
+    </div>
+    {% if reviews %}
+    <ul class="project-grid">
+        {% for r in reviews %}
+        <li class="project-item">
+            <div class="project-header">
+                <strong class="project-title">{{ r.project_title or 'Untitled Project' }}</strong>
+                <span class="pill status-pill">{{ r.decision }}</span>
+            </div>
+            <div class="project-desc">{{ r.feedback or 'No feedback provided' }}</div>
+            <div class="project-meta">Reviewed at: {{ r.id }} | Project updated at: {{ r.project_updated_at or 'N/A' }}
+            </div>
+            <div class="project-actions">
+                <a class="btn-secondary btn-small" href="/reviewer/project-history/{{ r.project_id }}">Project
+                    History</a>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>You have not reviewed any projects yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

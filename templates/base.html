@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>CommitForge Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+
+<body>
+    <div class="app-shell">
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <h1 id="appBrand">CommitForge</h1>
+            </div>
+
+            {% if session.get('user_id') %}
+            <nav class="nav-links">
+                {% if session.get('role') == 'Contributor' %}
+                <a class="nav-link{% if request.path == '/contributor/dashboard' %} active{% endif %}" data-short="🏠"
+                    href="/contributor/dashboard">Dashboard</a>
+                <a class="nav-link{% if request.path == '/contributor/submit' %} active{% endif %}" data-short="➕"
+                    href="/contributor/submit">Submit Project</a>
+                {% endif %}
+
+                {% if session.get('role') == 'Reviewer' %}
+                <a class="nav-link{% if request.path == '/reviewer/dashboard' %} active{% endif %}" data-short="🏠"
+                    href="/reviewer/dashboard">Dashboard</a>
+                {% endif %}
+
+                {% if session.get('role') == 'Admin' %}
+                <a class="nav-link{% if request.path == '/admin/dashboard' %} active{% endif %}" data-short="🏠"
+                    href="/admin/dashboard">Dashboard</a>
+                {% endif %}
+
+                <a class="nav-link{% if request.path == '/notifications' %} active{% endif %}" data-short="🔔"
+                    href="/notifications">Notifications</a>
+
+                <form method="POST" action="/delete_account"
+                    onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.')"
+                    class="nav-link-form">
+                    <button type="submit" class="nav-link delete-account" data-short="🗑️">Delete Account</button>
+                </form>
+
+                <a class="nav-link logout" data-short="⏻" href="/logout">Logout</a>
+            </nav>
+            {% else %}
+            <nav class="nav-links auth-nav">
+                <a class="nav-link" href="/">Sign In</a>
+                <a class="nav-link" href="/register">Sign Up</a>
+            </nav>
+            {% endif %}
+        </aside>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <main class="main-content">
+            <header class="topbar">
+                <button class="menu-toggle topbar-toggle" id="menuToggle" aria-label="Toggle sidebar">☰</button>
+                <div>
+                    <h2>Welcome{% if session.get('role') %} {{ session.get('role') }}{% endif %}</h2>
+                </div>
+                <div class="topbar-actions">
+                    {% if session.get('user_id') %}
+                    <span class="pill">{{ session.get('role') }}</span>
+                    {% endif %}
+                </div>
+            </header>
+
+            <section class="content-wrapper">
+                {% block content %}{% endblock %}
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel">
+    <div class="dashboard-header">
+        <div>
+            <h3>Project History: {{ project.title }}</h3>
+            <p class="dashboard-subtitle">Changes and deletion history for this project.</p>
+        </div>
+        <div class="dashboard-stats" style="display:flex; gap:0.5rem; align-items:center;">
+            <form method="POST" action="/contributor/project-history/{{ project.id }}/clear"
+                onsubmit="return confirm('Clear all history for this project? This cannot be undone.')"
+                style="margin:0;">
+                <button type="submit" class="btn-secondary"
+                    style="background:#f8d7da; color:#721c24; border-color:#f5c6cb;">Clear History</button>
+            </form>
+            <a class="btn-secondary" href="/contributor/dashboard">Back to Dashboard</a>
+        </div>
+    </div>
+
+    <div class="project-list">
+        {% if history %}
+        <table style="width:100%; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th style="text-align:left; padding:0.65rem; border-bottom:1px solid #d0d0d0;">Date</th>
+                    <th style="text-align:left; padding:0.65rem; border-bottom:1px solid #d0d0d0;">Action</th>
+                    <th style="text-align:left; padding:0.65rem; border-bottom:1px solid #d0d0d0;">Category</th>
+                    <th style="text-align:left; padding:0.65rem; border-bottom:1px solid #d0d0d0;">Status</th>
+                    <th style="text-align:left; padding:0.65rem; border-bottom:1px solid #d0d0d0;">Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in history %}
+                <tr>
+                    <td style="padding:0.55rem; border-bottom:1px solid rgba(105, 138, 188, 0.2);">{{ entry.recorded_at
+                        | ist_time("datetime")
+                        }}</td>
+                    <td style="padding:0.55rem; border-bottom:1px solid rgba(105, 138, 188, 0.2);">{{ entry.action }}
+                    </td>
+                    <td style="padding:0.55rem; border-bottom:1px solid rgba(105, 138, 188, 0.2);">{{ entry.category or
+                        '—' }}</td>
+                    <td style="padding:0.55rem; border-bottom:1px solid rgba(105, 138, 188, 0.2);">{{ entry.status or
+                        '—' }}</td>
+                    <td style="padding:0.55rem; border-bottom:1px solid rgba(105, 138, 188, 0.2);">{{
+                        entry.description[:100] or 'No description' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No history found for this project.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

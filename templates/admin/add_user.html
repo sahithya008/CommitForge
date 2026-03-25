@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel" style="max-width:500px; margin:0 auto;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+        <h3 style="margin:0;">Add New User</h3>
+        <a href="/admin/dashboard" style="text-decoration:none; color:#3a3a3a; font-size:1.2rem;">✕</a>
+    </div>
+
+    {% if error %}
+    <div
+        style="background:#e8e8e8; color:#3a3a3a; padding:0.75rem; border-radius:0.5rem; margin-bottom:1rem; font-size:0.9rem;">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST" action="/admin/users/add" style="display:grid; gap:1rem;">
+        <div style="display:grid; gap:0.5rem;">
+            <label style="font-size:0.85rem; color:#3a3a3a; font-weight:500;">Full Name</label>
+            <input type="text" name="name" requirement="required" placeholder="John Doe"
+                style="padding:0.5rem; border:1px solid #d0d0d0; border-radius:0.4rem; font-size:0.95rem;">
+        </div>
+
+        <div style="display:grid; gap:0.5rem;">
+            <label style="font-size:0.85rem; color:#3a3a3a; font-weight:500;">Email</label>
+            <input type="email" name="email" requirement="required" placeholder="user@example.com"
+                style="padding:0.5rem; border:1px solid #d0d0d0; border-radius:0.4rem; font-size:0.95rem;">
+        </div>
+
+        <div style="display:grid; gap:0.5rem;">
+            <label style="font-size:0.85rem; color:#3a3a3a; font-weight:500;">Password</label>
+            <input type="password" name="password" requirement="required" placeholder="••••••••"
+                style="padding:0.5rem; border:1px solid #d0d0d0; border-radius:0.4rem; font-size:0.95rem;">
+        </div>
+
+        <div style="display:grid; gap:0.5rem;">
+            <label style="font-size:0.85rem; color:#3a3a3a; font-weight:500;">Role</label>
+            <select name="role"
+                style="padding:0.5rem; border:1px solid #d0d0d0; border-radius:0.4rem; font-size:0.95rem;">
+                <option value="Contributor">Contributor</option>
+                <option value="Reviewer">Reviewer</option>
+                <option value="Admin">Admin</option>
+            </select>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(3, minmax(120px, 1fr)); gap:0.75rem; margin-top:1rem;">
+            <a href="/admin/dashboard" class="btn-secondary"
+                style="text-align:center; padding:0.6rem 1rem; text-decoration:none;">Cancel</a>
+            <button type="reset" class="btn-secondary" style="padding:0.6rem 1rem;">Clear</button>
+            <button type="submit" class="btn-primary">Create User</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

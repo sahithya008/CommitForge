@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+{% if notifications %}
+<div class="notification-panel panel">
+    <h4 class="section-title" style="margin:0 0 var(--space-lg) 0; color:var(--primary);">📬 Recent Notifications</h4>
+    <div class="notification-list">
+        {% for notification in notifications[:5] %}
+        <div class="notification-item{% if notification.read_status == 0 %} unread{% endif %}">
+            <p class="notification-message">{{ notification.message }}</p>
+            <div class="notification-timestamp">{{ notification.created_at | ist_time("date") }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    <a href="/notifications" class="link-primary">View all</a>
+</div>
+{% endif %}
+
+<div class="panel">
+    <div class="dashboard-header">
+        <div>
+            <h3 class="section-title">My Projects</h3>
+            <p class="dashboard-subtitle">Track your submissions and status in one place.</p>
+        </div>
+        <div class="dashboard-stats">
+            <span class="pill total-count">Total: {{ projects|length }}</span>
+            <a class="btn-primary btn-submit" href="/contributor/submit">New Submission</a>
+            <a class="btn-secondary" href="/contributor/deleted">Deleted Projects</a>
+        </div>
+    </div>
+
+    <div class="project-list">
+        {% if projects %}
+        <ul class="project-grid">
+            {% for p in projects %}
+            <li class="project-item">
+                <div class="project-header">
+                    <strong class="project-title">{{ p.title }}</strong>
+                    <span class="pill status-pill">{{ p.status }}</span>
+                </div>
+                <div class="project-desc">{{ p.description or "No description" }}</div>
+                <div class="project-meta">Last updated: {{ (p.updated_at or p.created_at) | ist_time("datetime") if
+                    (p.updated_at or p.created_at) else 'unknown' }}</div>
+                <div class="project-actions">
+                    <a class="btn-primary btn-small" href="/contributor/edit/{{ p.id }}">Edit</a>
+                    <a class="btn-secondary btn-small" href="/contributor/history/{{ p.id }}">History</a>
+                    <form method="POST" action="/contributor/delete/{{ p.id }}"
+                        onsubmit="return confirm('Delete this project? This cannot be undone.')"
+                        class="project-delete-form">
+                        <button type="submit" class="btn-danger btn-small">Delete</button>
+                    </form>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No projects found yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="panel auth-panel">
+    <h3>Create your CommitForge account</h3>
+    <form method="POST" class="form-grid">
+        <label>Full Name</label>
+        <input type="text" name="name" placeholder="Your name" required />
+
+        <label>Email</label>
+        <input type="email" name="email" placeholder="name@domain.com" required />
+
+        <label>Password</label>
+        <input type="password" name="password" placeholder="••••••••" required />
+
+        <label>Role</label>
+        <select name="role" required>
+            <option>Contributor</option>
+            <option>Reviewer</option>
+            <option>Admin</option>
+        </select>
+
+        <button type="submit" class="btn-primary">Register</button>
+    </form>
+    <p class="sm">Already have an account? <a href="/">Sign in</a></p>
+</div>
+{% endblock %}

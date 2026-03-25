@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel">
+    <div class="dashboard-header">
+        <div>
+            <h3>Project History: {{ project.title }}</h3>
+            <p class="dashboard-subtitle">Revision timeline for this project.</p>
+        </div>
+        <div class="dashboard-stats" style="display:flex; gap:0.5rem; align-items:center;">
+            <form method="POST" action="/reviewer/project-history/{{ project.id }}/clear"
+                onsubmit="return confirm('Clear all history for this project? This cannot be undone.')"
+                style="margin:0;">
+                <button type="submit" class="btn-secondary"
+                    style="background:#f8d7da; color:#721c24; border-color:#f5c6cb;">Clear History</button>
+            </form>
+            <a class="btn-secondary" href="/reviewer/dashboard">Back to All</a>
+        </div>
+    </div>
+
+    <div class="project-list">
+        {% if last_modified %}
+        <p style="margin-bottom: .75rem; color:#1e3a5f; font-size:0.9rem;">Last modified: {{ last_modified.recorded_at |
+            ist_time("datetime")
+            }} by user {{ last_modified.contributor_id }} ({{ last_modified.action }})</p>
+        {% endif %}
+        {% if history %}
+        <table style="width:100%; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th style="text-align:left; padding:0.65rem; border-bottom:1px solid #2c3b5a;">Date</th>
+                    <th style="text-align:left; padding:0.65rem; border-bottom:1px solid #2c3b5a;">Action</th>
+                    <th style="text-align:left; padding:0.65rem; border-bottom:1px solid #2c3b5a;">Category</th>
+                    <th style="text-align:left; padding:0.65rem; border-bottom:1px solid #2c3b5a;">Status</th>
+                    <th style="text-align:left; padding:0.65rem; border-bottom:1px solid #2c3b5a;">By</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in history %}
+                <tr>
+                    <td style="padding:0.55rem; border-bottom:1px solid rgba(105, 138, 188, 0.2);">{{ entry.recorded_at
+                        | ist_time("datetime")
+                        }}</td>
+                    <td style="padding:0.55rem; border-bottom:1px solid rgba(105, 138, 188, 0.2);">{{ entry.action }}
+                    </td>
+                    <td style="padding:0.55rem; border-bottom:1px solid rgba(105, 138, 188, 0.2);">{{ entry.category or
+                        '—' }}</td>
+                    <td style="padding:0.55rem; border-bottom:1px solid rgba(105, 138, 188, 0.2);">{{ entry.status or
+                        '—' }}</td>
+                    <td style="padding:0.55rem; border-bottom:1px solid rgba(105, 138, 188, 0.2);">{{
+                        entry.contributor_id }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No history found for this project yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+        <h3>Submit New Project</h3>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-warning">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data" class="form-grid">
+        <label for="project_type">Project Type</label>
+        <select id="project_type" name="project_type" required>
+            <option value="" disabled selected>Select Project Type</option>
+            <option>Software Development</option>
+            <option>AI / Machine Learning</option>
+            <option>Data Science & Analytics</option>
+            <option>Cybersecurity</option>
+            <option>Blockchain / Web3</option>
+            <option>IoT / Hardware</option>
+            <option>UI/UX Design</option>
+            <option>Open Source Contributions</option>
+            <option>Mini / College Projects</option>
+            <option>Startup / Product Ideas</option>
+            <option>Social Impact Projects</option>
+            <option>Creative / Experimental Projects</option>
+        </select>
+
+        <label>Category</label>
+        <input type="text" name="category" placeholder="Web, AI, Mobile, etc." required />
+
+        <label>Description</label>
+        <textarea name="description" rows="4" placeholder="Short project overview" required></textarea>
+
+        <label>Demo Link</label>
+        <input type="url" name="demo_link" placeholder="https://" />
+
+        <label>GitHub Link</label>
+        <input type="url" name="github_link" placeholder="https://github.com/..." />
+
+        <label>Project Zip</label>
+        <input type="file" name="zip_file" accept=".zip" required />
+
+        <button type="submit" class="btn-primary">Submit Project</button>
+    </form>
+</div>
+
+<script>
+    const submitForm = document.querySelector('.form-grid');
+    if (submitForm) {
+        submitForm.addEventListener('submit', (e) => {
+            const projectType = document.getElementById('project_type');
+            if (!projectType || !projectType.value) {
+                e.preventDefault();
+                projectType?.focus();
+                alert('Please select a Project Type before submitting.');
+            }
+        });
+    }
+</script>
+{% endblock %}

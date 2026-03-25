@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="panel auth-panel">
+    <h3>Login to CommitForge</h3>
+
+    {% if error %}
+    <div class="alert alert-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="/login" class="form-grid">
+        <label>Email</label>
+        <input type="email" name="email" placeholder="name@domain.com" required />
+
+        <label>Password</label>
+        <input type="password" name="password" placeholder="••••••••" required />
+
+        <button type="submit" class="btn-primary">Login</button>
+    </form>
+    <p class="sm">New here? <a href="/register">Create account</a></p>
+</div>
+{% endblock %}

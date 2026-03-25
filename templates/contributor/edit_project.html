@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+        <h3>Edit Project Submission</h3>
+        <a class="btn-primary" href="/contributor/dashboard" style="font-size:0.9rem;">Back to dashboard</a>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-warning">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data" class="form-grid">
+        <label>Project Title</label>
+        <input type="text" name="title" value="{{ project.title }}" required />
+
+        <label>Category</label>
+        <input type="text" name="category" value="{{ project.category }}" required />
+
+        <label>Description</label>
+        <textarea name="description" rows="4" required>{{ project.description }}</textarea>
+
+        <label>Demo Link</label>
+        <input type="url" name="demo_link" value="{{ project.demo_link }}" />
+
+        <label>GitHub Link</label>
+        <input type="url" name="github_link" value="{{ project.github_link }}" required />
+
+        <p style="font-size:0.9rem; color:#6b5b6b; margin:0.4rem 0;">Current archive: {{ project.zip_path | default('no
+            file uploaded') }}</p>
+        <label>Replace Project Zip</label>
+        <input type="file" name="zip_file" accept=".zip" />
+
+        <button type="submit" class="btn-primary">Save Changes</button>
+    </form>
+</div>
+{% endblock %}
